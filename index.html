@@ -3,25 +3,125 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>4K Particle Network Background</title>
+  <title>My Profile</title>
   <style>
     body {
       margin: 0;
       overflow: hidden;
-      background: #000; /* Black background for contrast */
+      background: #000;
+      font-family: Arial, sans-serif;
+      color: white;
     }
+
+    /* Canvas for the particle effect */
     canvas {
       display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    /* Centering the profile box */
+    .profile-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+      z-index: 1;
+    }
+
+    /* Profile image styling */
+    .profile-container img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      margin-bottom: 20px;
+    }
+
+    /* Discord name styling */
+    .discord-name {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    /* Bio content */
+    .bio {
+      font-size: 14px;
+      margin: 20px 0;
+      text-align: left;
+      line-height: 1.5;
+    }
+
+    /* Links styling */
+    .links a {
+      display: block;
+      margin: 10px 0;
+      text-decoration: none;
+      color: #00b0f4;
+      font-size: 16px;
+    }
+
+    .links a:hover {
+      color: #1e90ff;
+    }
+
+    /* Button style */
+    .button {
+      padding: 10px 20px;
+      background-color: rgba(255, 255, 255, 0.8);
+      color: black;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background-color 0.3s;
+    }
+
+    .button:hover {
+      background-color: rgba(255, 255, 255, 1);
     }
   </style>
 </head>
 <body>
+
   <canvas id="particleCanvas"></canvas>
+
+  <!-- Profile Box -->
+  <div class="profile-container">
+    <img src="your-profile-pic-url.jpg" alt="Discord Profile Picture"> <!-- Replace with your Discord profile pic URL -->
+    <div class="discord-name">KoMjölkaren123</div> <!-- Your Discord Name -->
+
+    <!-- Bio -->
+    <div class="bio">
+      Hello, I'm KoMjölkaren123! I'm a developer and gamer. Here's my online presence:
+    </div>
+
+    <!-- Links -->
+    <div class="links">
+      <a href="https://discord.com/users/your-id" target="_blank">Discord Profile</a>
+      <a href="https://www.paypal.me/your-username" target="_blank">PayPal</a>
+      <a href="https://github.com/your-username" target="_blank">GitHub</a>
+      <a href="https://soundcloud.com/your-username" target="_blank">SoundCloud</a>
+      <a href="https://open.spotify.com/user/your-username" target="_blank">Spotify</a>
+    </div>
+
+    <!-- Action Button (e.g., message button) -->
+    <button class="button" onclick="alert('Message sent!')">Send Message</button>
+  </div>
+
   <script>
     const canvas = document.getElementById("particleCanvas");
     const ctx = canvas.getContext("2d");
 
-    // Set canvas resolution to 4K
+    // Set canvas resolution to the screen size
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
@@ -119,5 +219,6 @@
     initParticles();
     animate();
   </script>
+
 </body>
 </html>
