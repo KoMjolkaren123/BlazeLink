@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>4K Particle Network Background</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #000; /* Black background for contrast */
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particleCanvas"></canvas>
+  <script>
+    const canvas = document.getElementById("particleCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // Set canvas resolution to 4K
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+    const particleCount = 200; // Number of particles
+    const maxLineDistance = 150; // Max distance to connect particles
+
+    // Adjust canvas for high DPI screens
+    const scaleFactor = window.devicePixelRatio || 1;
+    canvas.width *= scaleFactor;
+    canvas.height *= scaleFactor;
+    ctx.scale(scaleFactor, scaleFactor);
+
+    // Particle class
+    class Particle {
+      constructor(x, y, dx, dy, size, color) {
+        this.x = x;
+        this.y = y;
+        this.dx = dx;
+        this.dy = dy;
+        this.size = size;
+        this.color = color;
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+      }
+
+      update() {
+        if (this.x + this.size > window.innerWidth || this.x - this.size < 0) {
+          this.dx = -this.dx;
+        }
+        if (this.y + this.size > window.innerHeight || this.y - this.size < 0) {
+          this.dy = -this.dy;
+        }
+        this.x += this.dx;
+        this.y += this.dy;
+        this.draw();
+      }
+    }
+
+    // Create particles
+    function initParticles() {
+      particles.length = 0; // Clear any existing particles
+      for (let i = 0; i < particleCount; i++) {
+        const size = Math.random() * 2 + 1;
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const dx = (Math.random() - 0.5) * 2;
+        const dy = (Math.random() - 0.5) * 2;
+        const color = "rgba(255, 255, 255, 0.8)";
+        particles.push(new Particle(x, y, dx, dy, size, color));
+      }
+    }
+
+    // Draw lines between nearby particles
+    function connectParticles() {
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < maxLineDistance) {
+            const opacity = 1 - distance / maxLineDistance;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    // Animation loop
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach((particle) => particle.update());
+      connectParticles();
+      requestAnimationFrame(animate);
+    }
+
+    // Resize canvas dynamically
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initParticles();
+    });
+
+    // Initialize particles and start animation
+    initParticles();
+    animate();
+  </script>
+</body>
+</html>
