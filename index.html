@@ -45,6 +45,19 @@
       height: 150px;
       border-radius: 50%;
       margin-bottom: 20px;
+      position: relative;  /* For positioning the green dot */
+    }
+
+    /* Green dot for online status */
+    .green-dot {
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      width: 20px;
+      height: 20px;
+      background-color: #00FF00;
+      border-radius: 50%;
+      border: 2px solid #000;
     }
 
     .discord-name {
@@ -76,6 +89,26 @@
     .links a:hover {
       color: #1e90ff;
     }
+
+    /* Eye icon styles */
+    .eye-container {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      display: flex;
+      align-items: center;
+      font-size: 24px;
+      color: white;
+    }
+
+    .eye-container i {
+      margin-right: 10px;
+    }
+
+    .view-count {
+      font-size: 18px;
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -86,6 +119,7 @@
   <!-- Profile Container -->
   <div class="profile-container">
     <img src="https://cdn.discordapp.com/avatars/1285612787942555723/bd6c6c2836747ce1824fc573839e6925.png?size=1024" alt="Discord Profile Picture">
+    <div class="green-dot"></div>  <!-- Green dot for online status -->
     <div class="discord-name">KoMjölkaren123</div>
 
     <div class="bio">
@@ -99,6 +133,12 @@
       <a href="https://soundcloud.com/your-username" target="_blank" title="SoundCloud"><i class="fab fa-soundcloud"></i></a>
       <a href="https://open.spotify.com/user/your-username" target="_blank" title="Spotify"><i class="fab fa-spotify"></i></a>
     </div>
+  </div>
+
+  <!-- Eye Icon and View Counter -->
+  <div class="eye-container">
+    <i class="fas fa-eye"></i>
+    <div class="view-count" id="viewCount">Views: 0</div>
   </div>
 
   <script>
@@ -203,6 +243,14 @@
     // Initialize particles and start animation
     initParticles();
     animate();
+
+    // View counter functionality
+    let viewCount = localStorage.getItem("viewCount") || 0;
+    document.getElementById("viewCount").textContent = `Views: ${viewCount}`;
+
+    // Increment the view count when the page loads
+    viewCount++;
+    localStorage.setItem("viewCount", viewCount);
   </script>
 
 </body>
