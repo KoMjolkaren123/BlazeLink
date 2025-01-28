@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Profile with Status</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script> <!-- Particle.js library -->
   <style>
     /* Same styles as before */
     body {
@@ -13,6 +14,17 @@
       background: #000;
       font-family: Arial, sans-serif;
       color: white;
+      position: relative;
+      height: 100vh;  /* Ensure full viewport height */
+    }
+
+    #particleCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;  /* Ensure canvas is behind the profile */
     }
 
     .profile-container {
@@ -25,7 +37,7 @@
       border-radius: 10px;
       text-align: center;
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
-      z-index: 1;
+      z-index: 1;  /* Ensure profile container is above the particles */
     }
 
     .status-circle {
@@ -109,6 +121,80 @@
   </div>
 
   <script>
+    // Initialize Particles.js
+    particlesJS("particleCanvas", {
+      "particles": {
+        "number": {
+          "value": 80,
+          "density": {
+            "enable": true,
+            "value_area": 800
+          }
+        },
+        "color": {
+          "value": "#ffffff"
+        },
+        "shape": {
+          "type": "circle",
+          "stroke": {
+            "width": 0,
+            "color": "#000000"
+          }
+        },
+        "opacity": {
+          "value": 0.5,
+          "random": true,
+          "anim": {
+            "enable": true,
+            "speed": 1,
+            "opacity_min": 0.1
+          }
+        },
+        "size": {
+          "value": 5,
+          "random": true,
+          "anim": {
+            "enable": true,
+            "speed": 4,
+            "size_min": 0.1
+          }
+        },
+        "line_linked": {
+          "enable": true,
+          "distance": 150,
+          "color": "#ffffff",
+          "opacity": 0.4,
+          "width": 1
+        },
+        "move": {
+          "enable": true,
+          "speed": 6,
+          "direction": "none",
+          "random": true,
+          "straight": false,
+          "out_mode": "out",
+          "bounce": false,
+          "attract": {
+            "enable": false
+          }
+        }
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+          "onhover": {
+            "enable": true,
+            "mode": "repulse"
+          },
+          "onclick": {
+            "enable": true,
+            "mode": "push"
+          }
+        }
+      },
+      "retina_detect": true
+    });
+
     // Fetch the status from the backend (bot)
     fetch('http://localhost:3000/status')
       .then(response => response.json())
