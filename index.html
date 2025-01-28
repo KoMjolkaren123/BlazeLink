@@ -3,11 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Profile with Status</title>
+  <title>My Profile with Particle Network Background</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script> <!-- Particle.js library -->
   <style>
-    /* Same styles as before */
     body {
       margin: 0;
       overflow: hidden;
@@ -15,9 +13,10 @@
       font-family: Arial, sans-serif;
       color: white;
       position: relative;
-      height: 100vh;  /* Ensure full viewport height */
+      height: 100vh;
     }
 
+    /* Particle Canvas */
     #particleCanvas {
       position: absolute;
       top: 0;
@@ -27,6 +26,7 @@
       z-index: -1;  /* Ensure canvas is behind the profile */
     }
 
+    /* Profile container styles */
     .profile-container {
       position: fixed;
       top: 50%;
@@ -37,22 +37,7 @@
       border-radius: 10px;
       text-align: center;
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
-      z-index: 1;  /* Ensure profile container is above the particles */
-    }
-
-    .status-circle {
-      width: 15px;
-      height: 15px;
-      border-radius: 50%;
-      margin-bottom: 10px;
-      display: inline-block;
-    }
-
-    .status {
-      font-size: 16px;
-      color: #b1b1b1;
-      font-style: italic;
-      margin-bottom: 10px;
+      z-index: 1;
     }
 
     .profile-container img {
@@ -95,15 +80,11 @@
 </head>
 <body>
 
+  <!-- Particle Network -->
   <canvas id="particleCanvas"></canvas>
 
+  <!-- Profile Container -->
   <div class="profile-container">
-    <!-- Discord Status (Dot and Text) -->
-    <div class="status">
-      <span class="status-circle" id="statusDot"></span> 
-      <span id="discordStatusText">Loading...</span>
-    </div>
-
     <img src="https://cdn.discordapp.com/avatars/1285612787942555723/bd6c6c2836747ce1824fc573839e6925.png?size=1024" alt="Discord Profile Picture">
     <div class="discord-name">KoMjölkaren123</div>
 
@@ -121,103 +102,107 @@
   </div>
 
   <script>
-    // Initialize Particles.js
-    particlesJS("particleCanvas", {
-      "particles": {
-        "number": {
-          "value": 80,
-          "density": {
-            "enable": true,
-            "value_area": 800
-          }
-        },
-        "color": {
-          "value": "#ffffff"
-        },
-        "shape": {
-          "type": "circle",
-          "stroke": {
-            "width": 0,
-            "color": "#000000"
-          }
-        },
-        "opacity": {
-          "value": 0.5,
-          "random": true,
-          "anim": {
-            "enable": true,
-            "speed": 1,
-            "opacity_min": 0.1
-          }
-        },
-        "size": {
-          "value": 5,
-          "random": true,
-          "anim": {
-            "enable": true,
-            "speed": 4,
-            "size_min": 0.1
-          }
-        },
-        "line_linked": {
-          "enable": true,
-          "distance": 150,
-          "color": "#ffffff",
-          "opacity": 0.4,
-          "width": 1
-        },
-        "move": {
-          "enable": true,
-          "speed": 6,
-          "direction": "none",
-          "random": true,
-          "straight": false,
-          "out_mode": "out",
-          "bounce": false,
-          "attract": {
-            "enable": false
+    // Initialize Particles.js with updated settings
+    const canvas = document.getElementById("particleCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // Set canvas resolution to 4K
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+    const particleCount = 200; // Number of particles
+    const maxLineDistance = 150; // Max distance to connect particles
+
+    // Adjust canvas for high DPI screens
+    const scaleFactor = window.devicePixelRatio || 1;
+    canvas.width *= scaleFactor;
+    canvas.height *= scaleFactor;
+    ctx.scale(scaleFactor, scaleFactor);
+
+    // Particle class
+    class Particle {
+      constructor(x, y, dx, dy, size, color) {
+        this.x = x;
+        this.y = y;
+        this.dx = dx;
+        this.dy = dy;
+        this.size = size;
+        this.color = color;
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+      }
+
+      update() {
+        if (this.x + this.size > window.innerWidth || this.x - this.size < 0) {
+          this.dx = -this.dx;
+        }
+        if (this.y + this.size > window.innerHeight || this.y - this.size < 0) {
+          this.dy = -this.dy;
+        }
+        this.x += this.dx;
+        this.y += this.dy;
+        this.draw();
+      }
+    }
+
+    // Create particles
+    function initParticles() {
+      particles.length = 0; // Clear any existing particles
+      for (let i = 0; i < particleCount; i++) {
+        const size = Math.random() * 2 + 1;
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const dx = (Math.random() - 0.5) * 2;
+        const dy = (Math.random() - 0.5) * 2;
+        const color = "rgba(255, 255, 255, 0.8)";
+        particles.push(new Particle(x, y, dx, dy, size, color));
+      }
+    }
+
+    // Draw lines between nearby particles
+    function connectParticles() {
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < maxLineDistance) {
+            const opacity = 1 - distance / maxLineDistance;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
           }
         }
-      },
-      "interactivity": {
-        "detect_on": "canvas",
-        "events": {
-          "onhover": {
-            "enable": true,
-            "mode": "repulse"
-          },
-          "onclick": {
-            "enable": true,
-            "mode": "push"
-          }
-        }
-      },
-      "retina_detect": true
+      }
+    }
+
+    // Animation loop
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach((particle) => particle.update());
+      connectParticles();
+      requestAnimationFrame(animate);
+    }
+
+    // Resize canvas dynamically
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initParticles();
     });
 
-    // Fetch the status from the backend (bot)
-    fetch('http://localhost:3000/status')
-      .then(response => response.json())
-      .then(data => {
-        const status = data.status;
-        const statusDot = document.getElementById('statusDot');
-        const statusText = document.getElementById('discordStatusText');
-
-        if (status === 'online') {
-          statusDot.style.backgroundColor = '#4CAF50'; // Green
-          statusText.textContent = 'Online';
-        } else if (status === 'idle') {
-          statusDot.style.backgroundColor = '#FFEB3B'; // Yellow
-          statusText.textContent = 'Idle';
-        } else if (status === 'dnd') {
-          statusDot.style.backgroundColor = '#F44336'; // Red
-          statusText.textContent = 'Do Not Disturb';
-        } else {
-          statusDot.style.backgroundColor = '#9E9E9E'; // Grey for offline
-          statusText.textContent = 'Offline';
-        }
-      })
-      .catch(error => console.error('Error fetching status:', error));
+    // Initialize particles and start animation
+    initParticles();
+    animate();
   </script>
 
 </body>
